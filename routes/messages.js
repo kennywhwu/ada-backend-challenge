@@ -3,9 +3,19 @@ const router = express.Router();
 
 const Message = require("../models/message");
 
-router.get("/", (req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
-    console.log("res", res);
+    let messages = await Message.getAll();
+    return res.json(messages);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/:conversation_id", async (req, res, next) => {
+  try {
+    let messages = await Message.getOne(req.params.conversation_id);
+    return res.json(messages);
   } catch (error) {
     next(error);
   }
@@ -14,7 +24,6 @@ router.get("/", (req, res, next) => {
 router.post("/", async (req, res, next) => {
   try {
     let data = req.body;
-    console.log("data", data);
     let message = await Message.create(data);
     return res.json({ message });
   } catch (error) {
